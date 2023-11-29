@@ -4,7 +4,6 @@ const dotenv = require("dotenv");
 // const constantFile = require('../constants')
 
 const createData = asyncHandler(async (req, res) => {
-    // eslint-disable-next-line no-unused-vars
     const data = await Product.create({ ...req.body })
     res.status(200).json({ message: 'Successfully Created' })
 })

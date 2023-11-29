@@ -54,7 +54,7 @@ const signUp = asyncHandler(async (req, res) => {
     // Create JWT token
     const key = process.env.SECRET_KEY;
     const token = JWT.sign({ email }, key, {
-      expiresIn: 600000,
+      expiresIn: 3600,
     });
 
     res.json({
@@ -115,7 +115,7 @@ const signIn = asyncHandler(async (req, res) => {
   // Create JWT token with user's email and role
   const key = process.env.SECRET_KEY;
   const token = JWT.sign({ email: user.email, role }, key, {
-    expiresIn: 600000,
+    expiresIn: 3600,
   });
 
   res.json({
@@ -134,49 +134,49 @@ const getAll = asyncHandler(async (req, res) => {
   res.status(200).json({ data: findedData, count, totalPage });
 });
 
-// const getOne = asyncHandler(async (req, res) => {
-//     const findData = await Auth.findById(req.params.id)
-//     if (!findData) {
-//         res.status(404)
-//         throw new Error('Auth not found')
-//     }
-//     res.status(200).json(findData)
-// })
+const getOne = asyncHandler(async (req, res) => {
+    const findData = await Auth.findById(req.params.id)
+    if (!findData) {
+        res.status(404)
+        throw new Error('Auth not found')
+    }
+    res.status(200).json(findData)
+})
 
-// const updateData = asyncHandler(async (req, res) => {
-//     const findData = await Auth.findById(req.params.id)
-//     if (!findData) {
-//         res.status(404)
-//         throw new Error('Auth not found')
-//     }
+const updateData = asyncHandler(async (req, res) => {
+    const findData = await Auth.findById(req.params.id)
+    if (!findData) {
+        res.status(404)
+        throw new Error('Auth not found')
+    }
 
-//     if (Object.keys(req.body).length === 0) {
-//         res.status(400)
-//         throw new Error('Request body is empty')
-//     }
+    if (Object.keys(req.body).length === 0) {
+        res.status(400)
+        throw new Error('Request body is empty')
+    }
 
-//     const updatedAuth = Object.assign(findData, req.body)
+    const updatedAuth = Object.assign(findData, req.body)
 
-//     await updatedAuth.save()
+    await updatedAuth.save()
 
-//     res.status(200).json({ message: 'Successfully Updated' })
-// })
+    res.status(200).json({ message: 'Successfully Updated' })
+})
 
-// const deleteData = asyncHandler(async (req, res) => {
-//     const findData = await Auth.findById(req.params.id)
-//     if (!findData) {
-//         res.status(404)
-//         throw new Error('Auth not found')
-//     }
-//     await Auth.findByIdAndDelete(req.params.id)
-//     res.status(200).json({ message: 'Successfully Deleted' })
-// })
+const deleteData = asyncHandler(async (req, res) => {
+    const findData = await Auth.findById(req.params.id)
+    if (!findData) {
+        res.status(404)
+        throw new Error('Auth not found')
+    }
+    await Auth.findByIdAndDelete(req.params.id)
+    res.status(200).json({ message: 'Successfully Deleted' })
+})
 
 module.exports = {
   signUp,
   signIn,
   getAll,
-  // getOne,
-  // updateData,
-  // deleteData,
+  getOne,
+  updateData,
+  deleteData,
 };

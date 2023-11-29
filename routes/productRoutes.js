@@ -13,7 +13,6 @@ const {
 router.use(checkAuth);
 
 router.route("/").get(getAll);
-// router.route("/").get(checkAuth, getAll);
 router.route("/").post(createData);
 router.route("/:id").get(getOne).put(updateData).delete(deleteData);
 

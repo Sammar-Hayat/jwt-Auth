@@ -24,7 +24,7 @@ module.exports = async (req, res, next) => {
     
     // Check if the user has the role of 'admin'
     if (user.role !== "admin") {
-      return res.status(403).json({ message: "Access forbidden. Admin only." });
+      return res.status(403).json( { message: "Access forbidden. Admin only." });
     }
 
     req.user = {

@@ -11,11 +11,15 @@ const {
   deleteData,
 } = require("../controllers/authController");
 
-// router.use(checkAuth);
+// router.use(checkAuthAdmin);
 
-router.route("/signup").post(signUp);
+router.route("/signup").post(checkAuthAdmin, signUp);
 router.route("/signin").post(signIn);
-router.route("/").get(checkAuthAdmin,getAll);
-// router.route("/:id").get(getOne).put(updateData).delete(deleteData);
+router.route("/users").get(checkAuthAdmin, getAll);
+router
+  .route("/users/:id")
+  .get(checkAuthAdmin, getOne)
+  .put(checkAuthAdmin, updateData)
+  .delete(checkAuthAdmin, deleteData);
 
 module.exports = router;
