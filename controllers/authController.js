@@ -3,9 +3,10 @@ const Auth = require("../models/authModel");
 const { check, validationResult } = require("express-validator");
 const bcrypt = require("bcrypt");
 const JWT = require("jsonwebtoken");
+const dotenv = require("dotenv");
 // const constantFile = require('../constants')
 
-const createData = asyncHandler(async (req, res) => {
+const signUp = asyncHandler(async (req, res) => {
   // Validation middleware for email and password
   const emailValidation = check(
     "email",
@@ -29,7 +30,7 @@ const createData = asyncHandler(async (req, res) => {
   }
 
   // Destructure email and password after validation
-  const { email, password } = req.body;
+  const { email, password, role } = req.body;
 
   try {
     // Check if user already exists
@@ -42,16 +43,19 @@ const createData = asyncHandler(async (req, res) => {
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    console.log(hashedPassword);
+
     // Create a new user in the database
     const newUser = await Auth.create({
       email,
       password: hashedPassword,
+      role,
     });
-
     // Create JWT token
-    const token = JWT.sign({ email }, "kbhbkjh897ghbguig9898b", {
-      expiresIn: 3600,
-    }); // Replace 'your-secret-key' with your actual secret key
+    const key = process.env.SECRET_KEY;
+    const token = JWT.sign({ email }, key, {
+      expiresIn: 600000,
+    });
 
     res.json({
       token,
@@ -60,6 +64,63 @@ const createData = asyncHandler(async (req, res) => {
     console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
   }
+});
+
+// const signIn = asyncHandler(async (req, res) => {
+//   const { password, email } = req.body;
+
+//   const user = await Auth.findOne({ email: email }).exec();
+
+//   if (!user) {
+//     return res.status(400).json({ message: "Invalid Credentials" });
+//   }
+
+//  let isMatch=await bcrypt.compare(password,user.password);
+//  if (!isMatch) {
+//     return res.status(400).json({ message: "Invalid Credentials" });
+//   }
+// // Create JWT token
+// const key = process.env.SECRET_KEY;
+// const token = JWT.sign({ email }, key, {
+//   expiresIn: 600000,
+// });
+
+// res.json({
+//   token,
+// });
+
+// });
+
+const signIn = asyncHandler(async (req, res) => {
+  const { password, email } = req.body;
+
+  // Fetch user details including the role from the database
+  const user = await Auth.findOne({ email }).exec();
+
+  if (!user) {
+    return res.status(400).json({ message: "Invalid Credentials" });
+  }
+
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) {
+    return res.status(400).json({ message: "Invalid Credentials" });
+  }
+
+  // Log the fetched role to debug
+  console.log("Fetched Role:", user.role);
+
+  // Fetch the role from the database
+  const role = user.role;
+
+  // Create JWT token with user's email and role
+  const key = process.env.SECRET_KEY;
+  const token = JWT.sign({ email: user.email, role }, key, {
+    expiresIn: 600000,
+  });
+
+  res.json({
+    token,
+  });
 });
 
 const getAll = asyncHandler(async (req, res) => {
@@ -112,7 +173,8 @@ const getAll = asyncHandler(async (req, res) => {
 // })
 
 module.exports = {
-  createData,
+  signUp,
+  signIn,
   getAll,
   // getOne,
   // updateData,

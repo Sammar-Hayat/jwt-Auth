@@ -11,8 +11,10 @@ app.use(express.json());
 // });
 
 connectDb();
-app.listen(5099, () => {
-  console.log("Server running on port 5099");
+const port = process.env.PORT || 5008;
+app.listen(port, () => {
+  console.log(`server running on ${port}`);
 });
 
 app.use("/api/auth", require("./routes/authRoutes"));
+app.use("/api/products", require("./routes/productRoutes"));
