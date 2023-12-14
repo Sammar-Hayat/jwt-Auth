@@ -1,5 +1,5 @@
 const express = require("express");
-const checkAuth = require("../middlerware/checkAuth");
+const checkAuthUser = require("../middlerware/checkAuthUser");
 
 const router = express.Router();
 const {
@@ -10,7 +10,7 @@ const {
   deleteData,
 } = require("../controllers/productController");
 
-router.use(checkAuth);
+router.use(checkAuthUser);
 
 router.route("/").get(getAll);
 router.route("/").post(createData);
